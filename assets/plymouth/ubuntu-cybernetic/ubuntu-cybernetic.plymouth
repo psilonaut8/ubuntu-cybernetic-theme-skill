@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=Ubuntu Cybernetic
+Description=Original dark terminal-style boot display
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/ubuntu-cybernetic
+ScriptFile=/usr/share/plymouth/themes/ubuntu-cybernetic/ubuntu-cybernetic.script

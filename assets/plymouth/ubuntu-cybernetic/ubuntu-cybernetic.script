@@ -1,0 +1,235 @@
+# Ubuntu Cybernetic — custom Plymouth script theme
+# Uses Plymouth's native script, text, sprite, and refresh facilities.
+
+Window.SetBackgroundTopColor(0.023, 0.035, 0.043);
+Window.SetBackgroundBottomColor(0.031, 0.047, 0.055);
+
+screen_w = Window.GetWidth();
+screen_h = Window.GetHeight();
+panel_w = 640;
+panel_x = (screen_w - panel_w) / 2;
+panel_y = (screen_h - 480) / 2;
+
+# Native text helper: top-left position, with alignment handled by Pango.
+fun make_text(text, font, red, green, blue, alpha, x, y, align, z) {
+    local.image;
+    local.sprite;
+    local.image = Image.Text(text, red, green, blue, alpha, font, align);
+    local.sprite = Sprite(local.image);
+    if (align == "center") {
+        local.x = x - local.image.GetWidth() / 2;
+    } else if (align == "right") {
+        local.x = x - local.image.GetWidth();
+    } else {
+        local.x = x;
+    }
+    local.sprite.SetPosition(local.x, y, z);
+    return local.sprite;
+}
+
+# Thin native image assets are scaled only where necessary.
+rule_image = Image("rule.png");
+scan_image = Image("scanline.png");
+rule_sprite = Sprite(rule_image);
+rule_sprite.SetPosition(panel_x, panel_y + 92, 1);
+rule_sprite.SetOpacity(0.58);
+
+scan_sprite = Sprite(scan_image);
+scan_sprite.SetPosition(panel_x, panel_y + 100, 2);
+scan_sprite.SetOpacity(0.24);
+
+# Minimal corner marks provide a measured instrument-panel edge without a card.
+corner_h = Image("corner-h.png");
+corner_v = Image("corner-v.png");
+mark_tl_h = Sprite(corner_h);
+mark_tl_h.SetPosition(panel_x, panel_y + 2, 3);
+mark_tl_v = Sprite(corner_v);
+mark_tl_v.SetPosition(panel_x, panel_y + 2, 3);
+mark_tr_h = Sprite(corner_h);
+mark_tr_h.SetPosition(panel_x + panel_w - 18, panel_y + 2, 3);
+mark_tr_v = Sprite(corner_v);
+mark_tr_v.SetPosition(panel_x + panel_w - 1, panel_y + 2, 3);
+
+# Small edge labels and title.
+left_meta = make_text("LOCAL NODE / 01", "Ubuntu Mono 12", 0.39, 0.53, 0.56, 1.0, panel_x + 18, panel_y + 18, "left", 8);
+right_meta = make_text("LOCAL SYSTEM", "Ubuntu Mono 12", 0.39, 0.53, 0.56, 1.0, panel_x + panel_w - 18, panel_y + 18, "right", 8);
+title = make_text("NODE // ACTIVE", "Ubuntu Mono 34", 0.78, 0.89, 0.91, 1.0, screen_w / 2, panel_y + 42, "center", 9);
+section = make_text("SYSTEM INITIALIZATION", "Ubuntu Mono 13", 0.55, 0.68, 0.70, 1.0, panel_x + 18, panel_y + 112, "left", 9);
+section_code = make_text("SYSTEM / 01", "Ubuntu Mono 12", 0.34, 0.49, 0.52, 1.0, panel_x + panel_w - 18, panel_y + 112, "right", 9);
+
+# Rows appear in sequence. Text and status are deliberately separated into columns.
+row1_label = make_text("NEURAL LINK", "Ubuntu Mono 17", 0.78, 0.84, 0.85, 1.0, panel_x + 42, panel_y + 151, "left", 10);
+row1_value = make_text("[ OK ]", "Ubuntu Mono 16", 0.43, 0.75, 0.77, 1.0, panel_x + panel_w - 18, panel_y + 152, "right", 10);
+row2_label = make_text("SYSTEM CORE", "Ubuntu Mono 17", 0.78, 0.84, 0.85, 1.0, panel_x + 42, panel_y + 197, "left", 10);
+row2_value = make_text("[ OK ]", "Ubuntu Mono 16", 0.43, 0.75, 0.77, 1.0, panel_x + panel_w - 18, panel_y + 198, "right", 10);
+row3_label = make_text("MEMORY", "Ubuntu Mono 17", 0.78, 0.84, 0.85, 1.0, panel_x + 42, panel_y + 243, "left", 10);
+row3_value = make_text("[ OK ]", "Ubuntu Mono 16", 0.43, 0.75, 0.77, 1.0, panel_x + panel_w - 18, panel_y + 244, "right", 10);
+row4_label = make_text("SHELL", "Ubuntu Mono 17", 0.78, 0.84, 0.85, 1.0, panel_x + 42, panel_y + 289, "left", 10);
+row4_value = make_text("[ ONLINE ]", "Ubuntu Mono 16", 0.56, 0.82, 0.82, 1.0, panel_x + panel_w - 18, panel_y + 290, "right", 10);
+
+row_dot_image = Image("dot.png");
+row1_dot = Sprite(row_dot_image); row1_dot.SetPosition(panel_x + 21, panel_y + 161, 10);
+row2_dot = Sprite(row_dot_image); row2_dot.SetPosition(panel_x + 21, panel_y + 207, 10);
+row3_dot = Sprite(row_dot_image); row3_dot.SetPosition(panel_x + 21, panel_y + 253, 10);
+row4_dot = Sprite(row_dot_image); row4_dot.SetPosition(panel_x + 21, panel_y + 299, 10);
+
+# Low-contrast rules separate the four status rows.
+row_rule_image = Image("row-rule.png");
+row_rule1 = Sprite(row_rule_image); row_rule1.SetPosition(panel_x + 18, panel_y + 183, 4); row_rule1.SetOpacity(0.32);
+row_rule2 = Sprite(row_rule_image); row_rule2.SetPosition(panel_x + 18, panel_y + 229, 4); row_rule2.SetOpacity(0.32);
+row_rule3 = Sprite(row_rule_image); row_rule3.SetPosition(panel_x + 18, panel_y + 275, 4); row_rule3.SetOpacity(0.32);
+row_rule4 = Sprite(row_rule_image); row_rule4.SetPosition(panel_x + 18, panel_y + 321, 4); row_rule4.SetOpacity(0.32);
+
+# One small eight-frame ring; the files are tiny and the animation is independent
+# of boot progress so it remains calm while waiting for later boot services.
+loader_frames[0] = Image("loader-01.png");
+loader_frames[1] = Image("loader-02.png");
+loader_frames[2] = Image("loader-03.png");
+loader_frames[3] = Image("loader-04.png");
+loader_frames[4] = Image("loader-05.png");
+loader_frames[5] = Image("loader-06.png");
+loader_frames[6] = Image("loader-07.png");
+loader_frames[7] = Image("loader-08.png");
+loader_sprite = Sprite(loader_frames[0]);
+loader_sprite.SetPosition(screen_w / 2 - 24, panel_y + 351, 10);
+loader_label = make_text("BOOT SEQUENCE ACTIVE", "Ubuntu Mono 11", 0.37, 0.51, 0.54, 1.0, screen_w / 2, panel_y + 405, "center", 9);
+cursor = make_text("_", "Ubuntu Mono 12", 0.47, 0.74, 0.76, 1.0, screen_w / 2 + 78, panel_y + 405, "left", 10);
+
+# These sprites are empty until Plymouth asks for an unlock password or question.
+password_prompt = Sprite();
+password_bullets = Sprite();
+question_prompt = Sprite();
+question_entry = Sprite();
+password_prompt.SetOpacity(0.0);
+password_bullets.SetOpacity(0.0);
+question_prompt.SetOpacity(0.0);
+question_entry.SetOpacity(0.0);
+
+frame = 0;
+exit_fade = 0;
+exit_frame = 0;
+
+fun refresh_callback() {
+    frame++;
+
+    # Header fades in quickly; the four status rows follow at measured intervals.
+    if (frame < 28) { fade = frame / 28.0; } else { fade = 1.0; }
+    if (exit_fade == 1) {
+        fade_out = 1.0 - ((frame - exit_frame) / 28.0);
+        if (fade_out < 0.0) { fade_out = 0.0; }
+        fade = fade * fade_out;
+    }
+    left_meta.SetOpacity(fade * 0.72);
+    right_meta.SetOpacity(fade * 0.72);
+    title.SetOpacity(fade);
+    rule_sprite.SetOpacity(fade * 0.54);
+    scan_sprite.SetOpacity(fade * 0.24);
+    section.SetOpacity(fade * 0.92);
+    section_code.SetOpacity(fade * 0.74);
+
+    if (frame < 25) { reveal1 = 0.0; } else if (frame < 43) { reveal1 = (frame - 25) / 18.0; } else { reveal1 = 1.0; }
+    if (frame < 42) { reveal2 = 0.0; } else if (frame < 60) { reveal2 = (frame - 42) / 18.0; } else { reveal2 = 1.0; }
+    if (frame < 59) { reveal3 = 0.0; } else if (frame < 77) { reveal3 = (frame - 59) / 18.0; } else { reveal3 = 1.0; }
+    if (frame < 76) { reveal4 = 0.0; } else if (frame < 94) { reveal4 = (frame - 76) / 18.0; } else { reveal4 = 1.0; }
+    row1_label.SetOpacity(reveal1 * fade); row1_value.SetOpacity(reveal1 * fade);
+    row2_label.SetOpacity(reveal2 * fade); row2_value.SetOpacity(reveal2 * fade);
+    row3_label.SetOpacity(reveal3 * fade); row3_value.SetOpacity(reveal3 * fade);
+    row4_label.SetOpacity(reveal4 * fade); row4_value.SetOpacity(reveal4 * fade);
+    row1_dot.SetOpacity(reveal1 * fade); row2_dot.SetOpacity(reveal2 * fade);
+    row3_dot.SetOpacity(reveal3 * fade); row4_dot.SetOpacity(reveal4 * fade);
+    row_rule1.SetOpacity(reveal1 * fade * 0.24); row_rule2.SetOpacity(reveal2 * fade * 0.24);
+    row_rule3.SetOpacity(reveal3 * fade * 0.24); row_rule4.SetOpacity(reveal4 * fade * 0.24);
+
+    # A barely visible horizontal scan moves through the readout over 34 seconds.
+    scan_y = panel_y + 100 + (Math.Int(frame / 5) % 340);
+    scan_sprite.SetPosition(panel_x, scan_y, 2);
+
+    # Keep the motion slow and restrained; the active tick rotates around a quiet ring.
+    loader_sprite.SetImage(loader_frames[Math.Int(frame / 6) % 8]);
+    if (frame > 96) { loader_sprite.SetOpacity(fade * 0.93); loader_label.SetOpacity(fade * 0.82); }
+    else { loader_sprite.SetOpacity(0.0); loader_label.SetOpacity(0.0); }
+    if ((Math.Int(frame / 26) % 2) == 0) { cursor.SetOpacity(fade * 0.68); }
+    else { cursor.SetOpacity(0.0); }
+}
+
+Plymouth.SetRefreshFunction(refresh_callback);
+
+fun boot_progress_callback(duration, progress_value) {
+    if (progress_value >= 0.999 && exit_fade == 0) {
+        exit_fade = 1;
+        exit_frame = frame;
+    }
+}
+Plymouth.SetBootProgressFunction(boot_progress_callback);
+
+# Keep Plymouth's emergency dialogs usable, including encrypted-volume prompts.
+fun display_password_callback(prompt, bullets) {
+    local.bullet_text;
+    local.i;
+    local.p_image;
+    local.b_image;
+    local.p_scale;
+    local.p_height;
+    local.b_height;
+    local.bullet_text = "";
+    for (local.i = 0; local.i < bullets; local.i++) {
+        local.bullet_text = local.bullet_text + "•";
+    }
+    if (local.bullet_text == "") { local.bullet_text = "_"; }
+    local.p_image = Image.Text(prompt, 0.80, 0.88, 0.90, 1.0, "Ubuntu Mono 13", "center");
+    if (local.p_image.GetWidth() > panel_w) {
+        local.p_scale = panel_w / local.p_image.GetWidth();
+        local.p_image = local.p_image.Scale(panel_w, local.p_image.GetHeight() * local.p_scale);
+    }
+    local.b_image = Image.Text(local.bullet_text, 0.46, 0.78, 0.80, 1.0, "Ubuntu Mono 16", "center");
+    password_prompt.SetImage(local.p_image);
+    password_prompt.SetPosition(screen_w / 2 - local.p_image.GetWidth() / 2, panel_y + 446, 20);
+    password_prompt.SetOpacity(1.0);
+    password_bullets.SetImage(local.b_image);
+    password_bullets.SetPosition(screen_w / 2 - local.b_image.GetWidth() / 2, panel_y + 466, 20);
+    password_bullets.SetOpacity(1.0);
+}
+Plymouth.SetDisplayPasswordFunction(display_password_callback);
+
+fun display_normal_callback() {
+    password_prompt.SetOpacity(0.0);
+    password_bullets.SetOpacity(0.0);
+    question_prompt.SetOpacity(0.0);
+    question_entry.SetOpacity(0.0);
+}
+Plymouth.SetDisplayNormalFunction(display_normal_callback);
+
+fun display_question_callback(prompt, entry) {
+    local.q_image;
+    local.e_image;
+    local.q_image = Image.Text(prompt, 0.80, 0.88, 0.90, 1.0, "Ubuntu Mono 13", "center");
+    local.e_image = Image.Text(entry, 0.46, 0.78, 0.80, 1.0, "Ubuntu Mono 16", "center");
+    question_prompt.SetImage(local.q_image);
+    question_prompt.SetPosition(screen_w / 2 - local.q_image.GetWidth() / 2, panel_y + 446, 20);
+    question_prompt.SetOpacity(1.0);
+    question_entry.SetImage(local.e_image);
+    question_entry.SetPosition(screen_w / 2 - local.e_image.GetWidth() / 2, panel_y + 466, 20);
+    question_entry.SetOpacity(1.0);
+}
+Plymouth.SetDisplayQuestionFunction(display_question_callback);
+
+fun hide_message_callback(message) {
+    message_sprite.SetOpacity(0.0);
+}
+Plymouth.SetHideMessageFunction(hide_message_callback);
+
+fun display_message_callback(message) {
+    local.m_image;
+    local.m_scale;
+    local.m_image = Image.Text(message, 0.55, 0.68, 0.70, 1.0, "Ubuntu Mono 12", "center");
+    if (local.m_image.GetWidth() > panel_w) {
+        local.m_scale = panel_w / local.m_image.GetWidth();
+        local.m_image = local.m_image.Scale(panel_w, local.m_image.GetHeight() * local.m_scale);
+    }
+    message_sprite.SetImage(local.m_image);
+    message_sprite.SetPosition(screen_w / 2 - local.m_image.GetWidth() / 2, panel_y + 432, 15);
+    message_sprite.SetOpacity(1.0);
+}
+message_sprite = Sprite();
+message_sprite.SetOpacity(0.0);
+Plymouth.SetDisplayMessageFunction(display_message_callback);

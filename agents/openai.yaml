@@ -1,0 +1,5 @@
+interface:
+  display_name: "Ubuntu Cybernetic Theme"
+  short_description: "Style Ubuntu GNOME with a dark cybernetic theme"
+  brand_color: "#35EAFF"
+  default_prompt: "Use $ubuntu-cybernetic-theme to adapt and safely apply this dark cybernetic profile on my Ubuntu GNOME desktop."
