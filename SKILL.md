@@ -31,3 +31,5 @@ The app-drawer overlay in assets/app-drawer/gnome-shell-50.css targets GNOME She
 7. Report what changed, what was verified, where backups are stored, and the exact restore command for each installed layer. Distinguish static preview or syntax checks from live greeter or boot verification.
 
 The included scripts support the GNOME 50 drawer overlay, Ubuntu/Debian Plymouth installation, and Ubuntu-style GDM dconf defaults. Read references/components.md before using a script; stop and adapt when its preflight checks do not match the target system.
+
+Read references/profile.md for the source profile and which desktop choices are optional or machine-specific.

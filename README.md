@@ -7,6 +7,7 @@ A Codex skill and reusable theme components for a dark, cyan-accented Ubuntu GNO
 Clone this repository into your Codex skills directory:
 
 ~~~sh
+mkdir -p ~/.codex/skills
 git clone https://github.com/psilonaut8/ubuntu-cybernetic-theme-skill.git ~/.codex/skills/ubuntu-cybernetic-theme
 ~~~
 
@@ -22,7 +23,7 @@ Then ask Codex to use $ubuntu-cybernetic-theme to apply the layers you want. You
 
 ## Install optional components
 
-Read references/components.md first. The GNOME drawer script requires the active theme directory. The GDM script requires a local PNG and system-visible font. Plymouth changes require root and rebuild every installed initramfs image; it backs up those images and creates a rollback command before modifying the active theme.
+Read references/components.md and references/profile.md first. The GNOME drawer script requires the active theme directory. The GDM script requires a local PNG and system-visible font. Plymouth changes require root and rebuild every installed initramfs image; it backs up those images and creates a rollback command before modifying the active theme.
 
 Each installer has narrow preflight checks and refuses to overwrite an existing theme or recovery file. Do not remove its generated backup until the corresponding component has been checked.
 
