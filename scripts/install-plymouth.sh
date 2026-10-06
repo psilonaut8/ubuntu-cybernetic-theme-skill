@@ -104,9 +104,12 @@ for image in /boot/initrd.img-*; do
   verified=$((verified + 1))
 done
 ((verified > 0))
-(cd "$theme_dest" && find . -type f ! -name '.package-owned' -print0 | sort -z | xargs -0 sha256sum) > "$backup_dir/theme-manifest.sha256"
-find /boot -maxdepth 1 -type f -name 'initrd.img-*' -printf '%f\n' | sort > "$backup_dir/post-install-initramfs-list.txt"
-(cd /boot && sha256sum initrd.img-*) > "$backup_dir/post-install-initramfs.sha256"
+(cd "$theme_dest" && find . -type f ! -name '.package-owned' -print0 | sort -z | xargs -0 sha256sum) > "$backup_dir/theme-manifest.sha256.tmp"
+(cd /boot && sha256sum initrd.img-*) > "$backup_dir/post-install-initramfs.sha256.tmp"
+find /boot -maxdepth 1 -type f -name 'initrd.img-*' -printf '%f\n' | sort > "$backup_dir/post-install-initramfs-list.txt.tmp"
+mv -- "$backup_dir/theme-manifest.sha256.tmp" "$backup_dir/theme-manifest.sha256"
+mv -- "$backup_dir/post-install-initramfs.sha256.tmp" "$backup_dir/post-install-initramfs.sha256"
+mv -- "$backup_dir/post-install-initramfs-list.txt.tmp" "$backup_dir/post-install-initramfs-list.txt"
 trap - ERR
 printf 'active_theme=%s\nbackup_dir=%s\nverified_initramfs_images=%s\n' "$active" "$backup_dir" "$verified"
 printf 'rollback_command=sudo %s/rollback.sh %s\n' "$backup_dir" "$backup_dir"
